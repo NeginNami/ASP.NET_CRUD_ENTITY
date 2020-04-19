@@ -36,6 +36,21 @@ namespace ASP.NET_CRUD_ENTITY.Controllers
 
             return Content("Success");
         }
+
+        public ActionResult DeleteSelectedEmployee(List<string> employeeIds)
+        {
+            for (int i = 0; i < employeeIds.Count; i++)
+            {
+                Employee emp = new Employee { EmployeeId = Convert.ToInt32(employeeIds[i]) };
+                using (mvcCrudDb db = new mvcCrudDb())
+                {
+                    db.Employees.Attach(emp);
+                    db.Employees.Remove(emp);
+                    db.SaveChanges();
+                }
+            }
+            return Content("Success");
+        }
         //public Employee GetEmployee(int EmployeeId)
         //{
         //    Employee emp = new Employee();
