@@ -24,10 +24,41 @@ namespace ASP.NET_CRUD_ENTITY.Controllers
                 }
             return Content("Success");
         }
+        public ActionResult DeleteEmployee(string employeeId)
+        {
+            Employee emp = new Employee {EmployeeId= Convert.ToInt32(employeeId) };
+            using (mvcCrudDb db = new mvcCrudDb())
+            {
+                db.Employees.Attach(emp);
+                db.Employees.Remove(emp);
+                db.SaveChanges();
+            }
+
+            return Content("Success");
+        }
+        //public Employee GetEmployee(int EmployeeId)
+        //{
+        //    Employee emp = new Employee();
+        //    using (mvcCrudDb db = new mvcCrudDb())
+        //    {
+        //        var data = db.Employees.Where(x => x.EmployeeId == EmployeeId)
+        //              .Select(x => new Employee { EmployeeId = x.EmployeeId, EmployeeName = x.EmployeeName, 
+        //                  EmployeeEmail = x.EmployeeEmail, EmployeePhone = x.EmployeePhone, EmployeeAddress= x.EmployeeAddress });
+        //        emp = data.FirstOrDefault();
+
+        //    }
+        //    return emp;
+        //}
         public ActionResult RenderAddEmployee()
         {
             Employee emp = new Employee();
             return PartialView("Add",emp);
+        }
+        public ActionResult RenderDeleteEmployee(string employeeId)
+        {
+            Employee emp = new Employee();
+            emp.EmployeeId = Convert.ToInt32( employeeId);
+            return PartialView("Delete", emp);
         }
         public List<Employee> GetEmployeeList()
         {

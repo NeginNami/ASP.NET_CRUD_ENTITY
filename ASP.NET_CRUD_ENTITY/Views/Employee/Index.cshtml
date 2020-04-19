@@ -52,7 +52,7 @@
                         <td>@Model[i].EmployeePhone</td>
                         <td>
                             <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" @*data-toggle="tooltip"*@ title="Edit">&#xE254;</i></a>
-                            <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" @*data-toggle="tooltip"*@ title="Delete">&#xE872;</i></a>
+                            <a href="#deleteEmployeeModal" class="delete" data-toggle="modal" onclick="renderDelete('@Model[i].EmployeeId');"><i class="material-icons" @*data-toggle="tooltip"*@ title="Delete">&#xE872;</i></a>
                         </td>
                     </tr>
                 }
@@ -75,6 +75,9 @@
 <!-- Edit Modal HTML -->
 
 <div id="addModal">
+
+</div>
+<div id="deleteModal">
 
 </div>
 <!-- Edit Modal HTML -->
@@ -112,27 +115,7 @@
         </div>
     </div>
 </div>
-<!-- Delete Modal HTML -->
-<div id="deleteEmployeeModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form>
-                <div class="modal-header">
-                    <h4 class="modal-title">Delete Employee</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete these Records?</p>
-                    <p class="text-warning"><small>This action cannot be undone.</small></p>
-                </div>
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                    <input type="submit" class="btn btn-danger" value="Delete">
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+
 
 
 
@@ -178,7 +161,7 @@
         }
         function addOreditEmployee(isEdit, employeeId) {
 
-           
+
 
             initPhoneValidator();
             $.validator.unobtrusive.parse($('#addForm'));
@@ -197,15 +180,15 @@
                     type: "post",
                     success: function (savingStatus) {
 
-                      
+
                         $('#addEmployeeModal').modal('toggle');
                         $.notify("Saved Successfully", {
                             globalPosition: "top center",
                             className: "success",
                         });
                         setTimeout(function () { reload(); }, 2500);
-                      
-                      
+
+
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
                         $('#lblCommentsNotification').text("Error encountered while saving the comments.");
@@ -213,7 +196,7 @@
                     }
                 });
             }
-         
+
             return false;
         }
         function reload() {
@@ -238,5 +221,53 @@
                 });
         }
 
+    </script>
+    <!--AJAX CALL TO RENDER THE DELETE MODAL-->
+    <script>
+        function renderDelete(employeeID) {
+            console.log(employeeID);
+              $.ajax({
+                    url: '@Url.Action("RenderDeleteEmployee","Employee")',
+                    contentType: "application/json",
+                    type: "Post",
+                    data: JSON.stringify({ employeeId: employeeID }),
+                    success: function (result) {
+                        $('#deleteModal').html(result);
+                        $('#deleteEmployeeModal').modal('show');
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        $('#lblCommentsNotification').text("Error encountered while saving the comments.");
+                    }
+                });
+        }
+    </script>
+    <script>
+        function deleteEmployee(employeeId) {
+            console.log("Delete employee");
+            console.log(employeeId);
+            $.ajax({
+                    url: '@Url.Action("DeleteEmployee", "Employee")',
+                    contentType: "application/json",
+                    data: JSON.stringify({ employeeId: employeeId }),
+                    type: "post",
+                    success: function (DeleteStatus) {
+
+                        console.log(DeleteStatus);
+                        $('#deleteEmployeeModal').modal('hide');
+                        $.notify("Deleted Successfully", {
+                            globalPosition: "top center",
+                            className: "success",
+                        });
+                        //setTimeout(function () { reload(); }, 2500);
+
+
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        $('#lblCommentsNotification').text("Error encountered while saving the comments.");
+                        console.log(thrownError);
+                    }
+                });
+
+        }
     </script>
 }
