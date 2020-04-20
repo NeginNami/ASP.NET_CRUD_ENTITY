@@ -18,6 +18,7 @@ namespace ASP.NET_CRUD_ENTITY.Models
         public int EmployeeId { get; set; }
         [Required(ErrorMessage ="This Field is Required")]
         public string EmployeeName { get; set; }
+        //[DataType(DataType.MultilineText)]
         public string EmployeeAddress { get; set; }
         [Required(ErrorMessage = "This Field is Required")][EmailAddress(ErrorMessage = "Enter a valid email address")]
         public string EmployeeEmail { get; set; }

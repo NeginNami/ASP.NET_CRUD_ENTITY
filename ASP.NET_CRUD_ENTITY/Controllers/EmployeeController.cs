@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -16,12 +17,20 @@ namespace ASP.NET_CRUD_ENTITY.Controllers
         }
         public ActionResult AddOrEditEmployee(Employee emp)
         {
-            
-                using (mvcCrudDb db = new mvcCrudDb())
+            using (mvcCrudDb db = new mvcCrudDb())
+            {
+                if (emp.EmployeeId > 0)
+                {
+                    db.Entry(emp).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                else
                 {
                     db.Employees.Add(emp);
                     db.SaveChanges();
                 }
+            }
+
             return Content("Success");
         }
         public ActionResult DeleteEmployee(string employeeId)
@@ -67,7 +76,18 @@ namespace ASP.NET_CRUD_ENTITY.Controllers
         public ActionResult RenderAddEmployee()
         {
             Employee emp = new Employee();
-            return PartialView("Add",emp);
+            return PartialView("Add", emp);
+        }
+        public ActionResult RenderEditEmployee(string employeeId)
+        {
+            Employee emp = new Employee();
+            int employeeIdInt= Convert.ToInt32(employeeId);
+            using (mvcCrudDb db = new mvcCrudDb())
+            {
+                emp = db.Employees.First(e => e.EmployeeId == employeeIdInt);
+            }
+            return PartialView("Add", emp);
+
         }
         public ActionResult RenderDeleteEmployee(string employeeId)
         {
