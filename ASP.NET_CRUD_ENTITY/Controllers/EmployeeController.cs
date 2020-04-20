@@ -60,19 +60,6 @@ namespace ASP.NET_CRUD_ENTITY.Controllers
             }
             return Content("Success");
         }
-        //public Employee GetEmployee(int EmployeeId)
-        //{
-        //    Employee emp = new Employee();
-        //    using (mvcCrudDb db = new mvcCrudDb())
-        //    {
-        //        var data = db.Employees.Where(x => x.EmployeeId == EmployeeId)
-        //              .Select(x => new Employee { EmployeeId = x.EmployeeId, EmployeeName = x.EmployeeName, 
-        //                  EmployeeEmail = x.EmployeeEmail, EmployeePhone = x.EmployeePhone, EmployeeAddress= x.EmployeeAddress });
-        //        emp = data.FirstOrDefault();
-
-        //    }
-        //    return emp;
-        //}
         public ActionResult RenderAddEmployee()
         {
             Employee emp = new Employee();

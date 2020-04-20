@@ -7,6 +7,7 @@
 @model List<ASP.NET_CRUD_ENTITY.Models.Employee>
 
 <div class="container">
+    <div id="errorSection" style="color:red;text-align:center;margin-top:20px;font-weight:bold;"></div>
     <div class="table-wrapper">
         <div class="table-title">
             <div class="row">
@@ -14,7 +15,7 @@
                     <h2>Manage <b>Employees</b></h2>
                 </div>
                 <div class="col-sm-6">
-                    <a @*href="#addEmployeeModal"*@ class="btn btn-success" @*data-toggle="modal"*@ onclick="renderAdd();"><i class="material-icons">&#xE147;</i> <span>Add New Employee</span></a>
+                    <a class="btn btn-success" onclick="renderAdd();"><i class="material-icons">&#xE147;</i> <span>Add New Employee</span></a>
                     <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal" onclick="deleteSelection();"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a>
                 </div>
             </div>
@@ -51,16 +52,16 @@
                         <td>@Model[i].EmployeeAddress</td>
                         <td>@Model[i].EmployeePhone</td>
                         <td>
-                            <a style="cursor:pointer;" @*href="#editEmployeeModal"*@ class="edit" @*data-toggle="modal"*@ onclick="renderEdit('@Model[i].EmployeeId');"><i class="material-icons" @*data-toggle="tooltip"*@ title="Edit">&#xE254;</i></a>
-                            <a style="cursor:pointer;" @*href="#deleteEmployeeModal"*@ class="delete" @*data-toggle="modal"*@ onclick="renderDelete('@Model[i].EmployeeId');"><i class="material-icons" @*data-toggle="tooltip"*@ title="Delete">&#xE872;</i></a>
+                            <a style="cursor:pointer;" class="edit" onclick="renderEdit('@Model[i].EmployeeId');"><i class="material-icons" title="Edit">&#xE254;</i></a>
+                            <a style="cursor:pointer;" class="delete" onclick="renderDelete('@Model[i].EmployeeId');"><i class="material-icons" title="Delete">&#xE872;</i></a>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
         <div class="clearfix">
-            <div class="hint-text">Showing <b>5</b> out of <b>@Model.Count</b> entries</div>
-            <ul class="pagination">
+            <div class="hint-text">Showing <b>@Model.Count</b> out of <b>@Model.Count</b> entries</div>
+            @*<ul class="pagination">
                 <li class="page-item disabled"><a href="#">Previous</a></li>
                 <li class="page-item"><a href="#" class="page-link">1</a></li>
                 <li class="page-item"><a href="#" class="page-link">2</a></li>
@@ -68,7 +69,7 @@
                 <li class="page-item"><a href="#" class="page-link">4</a></li>
                 <li class="page-item"><a href="#" class="page-link">5</a></li>
                 <li class="page-item"><a href="#" class="page-link">Next</a></li>
-            </ul>
+            </ul>*@
         </div>
     </div>
 </div>
@@ -78,16 +79,10 @@
 <div id="deleteModal"></div>
 <div id="editModal"></div>
 
-
-
-
-
 @section scripts{
 
     <script type="text/javascript">
         $(document).ready(function () {
-            // Activate tooltip
-            //$('[data-toggle="tooltip"]').tooltip();
 
             // Select/Deselect checkboxes
             var checkbox = $('table tbody input[type="checkbox"]');
@@ -124,8 +119,6 @@
         }
         function addOreditEmployee(employeeId) {
 
-
-
             initPhoneValidator();
             $.validator.unobtrusive.parse($('#addForm'));
             if ($('#addForm').valid()) {
@@ -154,7 +147,8 @@
 
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
-                        $('#lblCommentsNotification').text("Error encountered while saving the comments.");
+                        $('#addEmployeeModal').modal('toggle');
+                        $('#errorSection').text("Error encountered while adding the new employee record.");
                         console.log(thrownError);
                     }
                 });
@@ -179,7 +173,7 @@
                         $('#addEmployeeModal').modal('show');
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
-                        $('#lblCommentsNotification').text("Error encountered while saving the comments.");
+                        $('#errorSection').text("Error encountered while rendering the form.");
                     }
                 });
         }
@@ -188,7 +182,6 @@
     <!--AJAX CALL TO RENDER THE DELETE MODAL-->
     <script>
         function renderDelete(employeeID) {
-            console.log(employeeID);
               $.ajax({
                     url: '@Url.Action("RenderDeleteEmployee","Employee")',
                     contentType: "application/json",
@@ -199,7 +192,7 @@
                         $('#deleteEmployeeModal').modal('show');
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
-                        $('#lblCommentsNotification').text("Error encountered while saving the comments.");
+                        $('#errorSection').text("Error encountered while rendering the form.");
                     }
                 });
         }
@@ -207,7 +200,6 @@
     <!--AJAX CALL TO RENDER THE EDIT MODAL-->
     <script>
         function renderEdit(employeeID) {
-            console.log(employeeID);
               $.ajax({
                     url: '@Url.Action("RenderEditEmployee","Employee")',
                     contentType: "application/json",
@@ -218,15 +210,13 @@
                         $('#addEmployeeModal').modal('show');
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
-                        $('#lblCommentsNotification').text("Error encountered while saving the comments.");
+                        $('#errorSection').text("Error encountered while rendering the form.");
                     }
                 });
         }
     </script>
     <script>
         function deleteEmployee(employeeId) {
-            console.log("Delete employee");
-            console.log(employeeId);
             $.ajax({
                     url: '@Url.Action("DeleteEmployee", "Employee")',
                     contentType: "application/json",
@@ -234,7 +224,6 @@
                     type: "post",
                     success: function (DeleteStatus) {
 
-                        console.log(DeleteStatus);
                         $('#deleteEmployeeModal').modal('hide');
                         $.notify("Deleted Successfully", {
                             globalPosition: "top center",
@@ -245,7 +234,8 @@
 
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
-                        $('#lblCommentsNotification').text("Error encountered while saving the comments.");
+                        $('#errorSection').text("Error encountered while deleting the employee record.");
+                        $('#deleteEmployeeModal').modal('hide');
                         console.log(thrownError);
                     }
                 });
@@ -266,19 +256,17 @@
                     type: "post",
                     success: function (DeleteStatus) {
 
-                        console.log(DeleteStatus);
-                        console.log("delete selection");
                         $('#deleteEmployeeModal').modal('hide');
                         $.notify("Selection Deleted Successfully", {
                             globalPosition: "top center",
                             className: "success",
                         });
                         setTimeout(function () { reload(); }, 2500);
-
-
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
-                        $('#lblCommentsNotification').text("Error encountered while saving the comments.");
+
+                        $('#errorSection').text("Error encountered while deleting the employee(s) record.");
+                        $('#deleteEmployeeModal').modal('hide');
                         console.log(thrownError);
                     }
                 });
